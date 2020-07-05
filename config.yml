@@ -1,0 +1,21 @@
+LogLevel: 2
+#Proxy: http://127.0.0.1:8080
+Workers: 2
+Requests:
+  - Path: 'https://www.test.com/test'
+    Method: 'get'
+    Headers:
+      test: "test"
+    Params:
+      - Name: param1
+        Type: ipv4
+      - Name: param2
+        Type: email
+  - Path: 'https://www.test.com/test'
+    Method: 'post'
+    Headers:
+      test: "test"
+    Params:
+      Name: param1
+      Value: test
+  
