@@ -23,6 +23,7 @@ func ConfigureProxy(proxy string) {
 	http.DefaultTransport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 }
+
 func CreateNewClient(config *Configuration) HttpAPI {
 	if config.Proxy != "" {
 		log.Infof("Registering Proxy %s", config.Proxy)
