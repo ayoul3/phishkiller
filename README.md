@@ -68,7 +68,7 @@ Params:
 ```
 The body sent will be:
 ```
-{"param1": "crudge_magdak%40yahoo.com"}
+{"param1": "crudge_magdak@yahoo.com"}
 ```
 ## To do
 * add support for PUT requests
