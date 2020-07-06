@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"syreclabs.com/go/faker"
 )
 
@@ -19,7 +20,8 @@ var Chan chan []*http.Request
 
 func CreateNewClient(config *Configuration) HttpAPI {
 	proxyUrl, err := url.Parse(config.Proxy)
-	if err != nil {
+	if err == nil {
+		log.Infof("Using Proxy %s", config.Proxy)
 		http.DefaultTransport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
@@ -82,6 +84,7 @@ func LoopRequests(client HttpAPI, requests []Request) {
 		var preparedReqs []*http.Request
 		for _, rawRequest := range requests {
 			req := PrepareRequests(client, rawRequest)
+			log.Debugf("Prepared request for %s %s", req.Method, req.URL.Path)
 			preparedReqs = append(preparedReqs, req)
 		}
 		Chan <- preparedReqs
@@ -91,6 +94,7 @@ func LoopRequests(client HttpAPI, requests []Request) {
 func Perform(client HttpAPI) {
 	for {
 		reqs := <-Chan
+		log.Infof("sending %d requests", len(reqs))
 		client.Perform(reqs)
 	}
 }
@@ -133,6 +137,7 @@ func GenerateFake(t string) string {
 	case "username":
 		return faker.Internet().UserName()
 	default:
+		log.Warnf("Faker %s not found. Using random string instead\n", t)
 		return faker.RandomString(10)
 	}
 }

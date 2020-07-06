@@ -43,6 +43,5 @@ func GetConfig() *Configuration {
 
 func (c *Configuration) SetLogLevel() {
 	logLevels := map[int64]log.Level{0: log.WarnLevel, 1: log.InfoLevel, 2: log.DebugLevel}
-
 	log.SetLevel(logLevels[c.LogLevel])
 }

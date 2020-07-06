@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ayoul3/phishkiller/lib"
-	"github.com/prometheus/common/log"
+	log "github.com/sirupsen/logrus"
 )
 
 var config *lib.Configuration
@@ -25,7 +25,6 @@ func main() {
 	for i := 0; i < config.Workers; i++ {
 		go lib.Perform(client)
 	}
-
+	log.Info("Initiating requests")
 	lib.LoopRequests(client, config.Requests)
-
 }

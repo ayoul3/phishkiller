@@ -46,12 +46,13 @@ func (h *HttpClient) PreparePost(url string, extraHeaders map[string]string, bod
 }
 
 func (h *HttpClient) Perform(reqs []*http.Request) {
-	log.Info("sending requests")
 	for _, req := range reqs {
-		_, err := h.Client.Do(req)
-		if err != nil {
-			log.Errorf("Error sending reaching %s: %s", req.URL, err)
-		}
+		go func(req *http.Request) {
+			_, err := h.Client.Do(req)
+			if err != nil {
+				log.Errorf("Error sending reaching %s: %s", req.URL, err)
+			}
+		}(req)
 	}
 	time.Sleep(1 * time.Second)
 }
