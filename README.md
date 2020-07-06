@@ -81,6 +81,9 @@ Dnt: 1
 Upgrade-Insecure-Requests: 1
 ```
 
+## Faker values
+Check lib/myfaker.go
+
 ## To do
 * add support for PUT requests
 * improve the CC faker
