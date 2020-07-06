@@ -3,6 +3,7 @@
 !*.go
 !go.mod
 !go.sum
+!sample
 !*.yml
 README.md
 !lib
