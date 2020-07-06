@@ -37,12 +37,12 @@ Requests:
     # Only supports get and post
     Method: 'get'
     
-    # list of headers to add to the default ones (see below). All lowercase
+    # Optional: list of headers to add to the default ones (see below). All lowercase
     Headers:
       referer: "www.test.com"
       x-custom-header: "value"
           
-    # List of parameters to include
+    # Optional: List of parameters to include
     Params:
       # Type holds the type of faker data to generate. This will send: param1=<random_ip>
       - Name: param1
@@ -70,7 +70,19 @@ The body sent will be:
 ```
 {"param1": "crudge_magdak@yahoo.com"}
 ```
+## Default headers
+```
+User-Agent: Mozilla/5.0 (Windows NT 8.0; Win64; x64; rv:<random>) Gecko/20100<random> Firefox/<random>
+Accept: text/html,application/xhtml+xml,application/xml;q=0.6,image/webp,*/*;q=0.5
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.5
+Connection: close
+Dnt: 1
+Upgrade-Insecure-Requests: 1
+```
+
 ## To do
 * add support for PUT requests
 * improve the CC faker
 * support more fakers
+* reuse fake value across multiple requests

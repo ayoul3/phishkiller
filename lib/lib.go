@@ -40,16 +40,24 @@ func CreateNewClient(config *Configuration) HttpAPI {
 	}
 }
 
-func PrepareRequests(client HttpAPI, req Request) *http.Request {
+func MergeURLParams(path string, data []byte) string {
+	if len(data) > 0 {
+		return fmt.Sprintf("%s?%s", path, data)
+	}
+	return path
+}
+
+func PrepareRequests(client HttpAPI, req Request) (*http.Request, error) {
 	switch req.Method {
 	case "get":
 		_, data := PrepareFormData(req.Headers, req.Params)
-		return client.PrepareGet(fmt.Sprintf("%s?%s", req.Path, data), req.Headers)
+		url := MergeURLParams(req.Path, data)
+		return client.PrepareGet(url, req.Headers), nil
 	case "post":
 		headers, data := PrepareData(req.Headers, req.Params)
-		return client.PreparePost(req.Path, headers, data)
+		return client.PreparePost(req.Path, headers, data), nil
 	}
-	return nil
+	return nil, fmt.Errorf("Method %s not supported for %s. Only get or post", req.Method, req.Path)
 }
 
 func PrepareData(headers map[string]string, params []Param) (map[string]string, []byte) {
@@ -70,6 +78,9 @@ func PrepareJson(headers map[string]string, params []Param) (map[string]string, 
 }
 
 func PrepareFormData(headers map[string]string, params []Param) (map[string]string, []byte) {
+	if headers == nil {
+		headers = make(map[string]string)
+	}
 	form := url.Values{}
 	for _, p := range params {
 		v := GetParamValue(p)
@@ -83,7 +94,11 @@ func LoopRequests(client HttpAPI, requests []Request) {
 	for {
 		var preparedReqs []*http.Request
 		for _, rawRequest := range requests {
-			req := PrepareRequests(client, rawRequest)
+			req, err := PrepareRequests(client, rawRequest)
+			if err != nil {
+				log.Warn(err)
+				continue
+			}
 			log.Debugf("Prepared request for %s %s", req.Method, req.URL.Path)
 			preparedReqs = append(preparedReqs, req)
 		}
