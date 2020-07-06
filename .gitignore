@@ -3,7 +3,7 @@
 !*.go
 !go.mod
 !go.sum
-!config.yml
+!*.yml
 README.md
 !lib
 !lib/*.go

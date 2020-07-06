@@ -1,0 +1,23 @@
+LogLevel: 2
+Proxy: http://127.0.0.1:8080 # Uncomment to tunnel traffic through proxy
+Workers: 1
+Requests:
+  - Path: 'https://www.test.com/sd/'
+    Method: 'gest'
+  - Path: 'https://www.test.com/sd/snd.php'
+    Method: 'post'
+    Params:
+      - Name: firstParam
+        Value: ""
+      - Name: usr
+        Type: email
+      - Name: pwd
+        Type: password
+  - Path: 'https://www.test.com/sd/sdgr.php'
+    Method: 'get'
+    Params:
+      - Name: page
+        Type: email
+      - Name: page5
+        Type: password
+  
