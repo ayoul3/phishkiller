@@ -15,7 +15,7 @@ import (
 
 const contentTypeHeader = "content-type"
 
-var Chan chan bool
+var Chan chan []*http.Request
 
 func CreateNewClient(config *Configuration) HttpAPI {
 	proxyUrl, err := url.Parse(config.Proxy)
@@ -24,13 +24,13 @@ func CreateNewClient(config *Configuration) HttpAPI {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 	defaultHeaders := map[string]string{
-		"Accept":                    "text/html,application/xhtml+xml,application/xml;q=0.6,image/webp,*/*;q=0.5",
-		"User-Agent":                "Mozilla/5.0 (Windows NT 8.0; Win64; x64; rv:69.0) Gecko/20100115 Firefox/89.85",
-		"Accept-Language":           "en-US,en;q=0.5",
-		"Accept-Encoding":           "gzip, deflate",
-		"DNT":                       "1",
-		"Connection":                "close",
-		"Upgrade-Insecure-Requests": "1",
+		"accept":                    "text/html,application/xhtml+xml,application/xml;q=0.6,image/webp,*/*;q=0.5",
+		"user-agent":                "Mozilla/5.0 (Windows NT 8.0; Win64; x64; rv:69.0) Gecko/20100115 Firefox/89.85",
+		"accept-language":           "en-US,en;q=0.5",
+		"accept-encoding":           "gzip, deflate",
+		"dnt":                       "1",
+		"connection":                "close",
+		"upgrade-insecure-requests": "1",
 	}
 	return &HttpClient{
 		Client:  &http.Client{},
@@ -38,15 +38,16 @@ func CreateNewClient(config *Configuration) HttpAPI {
 	}
 }
 
-func PrepareRequests(client HttpAPI, req Request) {
+func PrepareRequests(client HttpAPI, req Request) *http.Request {
 	switch req.Method {
 	case "get":
 		_, data := PrepareFormData(req.Headers, req.Params)
-		client.PrepareGet(fmt.Sprintf("%s?%s", req.Path, data), req.Headers)
+		return client.PrepareGet(fmt.Sprintf("%s?%s", req.Path, data), req.Headers)
 	case "post":
 		headers, data := PrepareData(req.Headers, req.Params)
-		client.PreparePost(req.Path, headers, data)
+		return client.PreparePost(req.Path, headers, data)
 	}
+	return nil
 }
 
 func PrepareData(headers map[string]string, params []Param) (map[string]string, []byte) {
@@ -76,13 +77,21 @@ func PrepareFormData(headers map[string]string, params []Param) (map[string]stri
 	return headers, []byte(form.Encode())
 }
 
+func LoopRequests(client HttpAPI, requests []Request) {
+	for {
+		var preparedReqs []*http.Request
+		for _, rawRequest := range requests {
+			req := PrepareRequests(client, rawRequest)
+			preparedReqs = append(preparedReqs, req)
+		}
+		Chan <- preparedReqs
+	}
+}
+
 func Perform(client HttpAPI) {
 	for {
-		Chan <- true
-		userAgent := GetRandomUA()
-		fmt.Println("here")
-		client.Perform(userAgent)
-		<-Chan
+		reqs := <-Chan
+		client.Perform(reqs)
 	}
 }
 
@@ -91,14 +100,6 @@ func GetParamValue(p Param) string {
 		return GenerateFake(p.Type)
 	}
 	return p.Value
-}
-
-func GetRandomUA() string {
-	ff_version := fmt.Sprintf("%d.%d", randRange(69, 82), randRange(69, 99))
-	ff_rv := fmt.Sprintf("%d.%d", randRange(58, 99), randRange(0, 9))
-	gecko := fmt.Sprintf("20100%03d", randRange(100, 121))
-	ua := fmt.Sprintf("Mozilla/5.0 (Windows NT 8.0; Win64; x64; rv:%s) Gecko/%s Firefox/%s", ff_rv, gecko, ff_version)
-	return ua
 }
 
 func GenerateFake(t string) string {

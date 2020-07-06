@@ -2,7 +2,6 @@ package lib_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"github.com/ayoul3/phishkiller/lib"
@@ -41,15 +40,5 @@ var _ = Describe("PrepareData", func() {
 			Expect(strings.Count(string(data), "%3A") > 4).To(BeTrue())
 			Expect(headers["content-type"]).To(ContainSubstring("x-www-form-urlencoded"))
 		})
-	})
-})
-
-var _ = Describe("GetRandomUA", func() {
-	It("should return a different UA each time", func() {
-		ua1 := lib.GetRandomUA()
-		ua2 := lib.GetRandomUA()
-		fmt.Println(ua1)
-		fmt.Println(ua2)
-		Expect(ua1).ToNot(Equal(ua2))
 	})
 })
