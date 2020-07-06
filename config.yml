@@ -1,6 +1,6 @@
 LogLevel: 1
-Proxy: http://127.0.0.1:8080 # Uncomment to tunnel traffic through proxy
-Workers: 1
+# Proxy: http://127.0.0.1:8080 # Uncomment to tunnel traffic through proxy
+Workers: 10
 Requests:
   - Path: 'https://www.test.com/test'
     Method: 'get'
