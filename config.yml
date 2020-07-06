@@ -1,12 +1,9 @@
 LogLevel: 1
-#Proxy: http://127.0.0.1:8080 # Uncomment to tunnel traffic through proxy
-Workers: 20
+Proxy: http://127.0.0.1:8080 # Uncomment to tunnel traffic through proxy
+Workers: 1
 Requests:
   - Path: 'https://www.test.com/test'
     Method: 'get'
-    Headers:
-      referer: "www.test.com"
-      x-custom-header: "value"
     Params:
       - Name: param1
         Type: ipv4

@@ -15,12 +15,18 @@ const contentTypeHeader = "content-type"
 
 var Chan chan []*http.Request
 
+func ConfigureProxy(proxy string) {
+	proxyUrl, err := url.Parse(proxy)
+	if err != nil {
+		log.Warnf("Error configuring proxy %s: %s", proxy, err)
+	}
+	http.DefaultTransport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+}
 func CreateNewClient(config *Configuration) HttpAPI {
-	proxyUrl, err := url.Parse(config.Proxy)
-	if err == nil {
-		log.Infof("Using Proxy %s", config.Proxy)
-		http.DefaultTransport = &http.Transport{Proxy: http.ProxyURL(proxyUrl)}
-		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	if config.Proxy != "" {
+		log.Infof("Registering Proxy %s", config.Proxy)
+		ConfigureProxy(config.Proxy)
 	}
 	defaultHeaders := map[string]string{
 		"accept":                    "text/html,application/xhtml+xml,application/xml;q=0.6,image/webp,*/*;q=0.5",

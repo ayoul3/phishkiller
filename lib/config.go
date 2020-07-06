@@ -1,8 +1,8 @@
 package lib
 
 import (
+	"github.com/FZambia/viper-lite"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 type Configuration struct {
