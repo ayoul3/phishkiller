@@ -48,9 +48,13 @@ func (h *HttpClient) PreparePost(url string, extraHeaders map[string]string, bod
 func (h *HttpClient) Perform(reqs []*http.Request) {
 	for _, req := range reqs {
 		go func(req *http.Request) {
-			_, err := h.Client.Do(req)
+			resp, err := h.Client.Do(req)
 			if err != nil {
 				log.Errorf("Error sending reaching %s: %s", req.URL, err)
+				return
+			}
+			if resp.StatusCode > 310 {
+				log.Errorf("Got error code %d reaching %s", resp.StatusCode, req.URL)
 			}
 		}(req)
 	}

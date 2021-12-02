@@ -40,6 +40,8 @@ func GenerateFake(t string) string {
 		return faker.Internet().Url()
 	case "username":
 		return faker.Internet().UserName()
+	case "number":
+		return faker.Numerify("#")
 	default:
 		log.Warnf("Faker %s not found. Using random string instead\n", t)
 		return faker.RandomString(10)
