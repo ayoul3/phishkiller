@@ -2,10 +2,10 @@ package lib
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"time"
 
+	"github.com/corpix/uarand"
 	"github.com/prometheus/common/log"
 )
 
@@ -62,9 +62,5 @@ func (h *HttpClient) Perform(reqs []*http.Request) {
 }
 
 func (h *HttpClient) setRandomUA() {
-	ff_version := fmt.Sprintf("%d.%d", randRange(69, 82), randRange(69, 99))
-	ff_rv := fmt.Sprintf("%d.%d", randRange(58, 99), randRange(0, 9))
-	gecko := fmt.Sprintf("20100%03d", randRange(100, 121))
-	ua := fmt.Sprintf("Mozilla/5.0 (Windows NT 8.0; Win64; x64; rv:%s) Gecko/%s Firefox/%s", ff_rv, gecko, ff_version)
-	h.Headers["user-agent"] = ua
+	h.Headers["user-agent"] = uarand.GetRandom()
 }

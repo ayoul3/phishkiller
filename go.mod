@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/FZambia/viper-lite v0.0.0-20171108064948-d5a31e6aa18b
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
+	github.com/corpix/uarand v0.1.1
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.3.2 // indirect
 	github.com/onsi/ginkgo v1.14.0
